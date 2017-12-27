@@ -1,6 +1,8 @@
 package me.lotabout.processor;
 
 import me.lotabout.annotation.Transformer;
+import me.lotabout.processor.model.ClassModel;
+import me.lotabout.processor.model.FieldModel;
 import me.lotabout.processor.util.MustacheUtil;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -11,6 +13,7 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
@@ -22,13 +25,15 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.github.mustachejava.Mustache;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.github.mustachejava.Mustache;
 import com.google.common.base.Charsets;
@@ -86,17 +91,19 @@ public class TransformerProcessor extends AbstractProcessor {
     private void generateTransformer(TypeElement e) {
         Elements elementUtils = processingEnv.getElementUtils();
         Transformer transformer = e.getAnnotation(Transformer.class);
-//        List<TypeElement> fromTypeList = Arrays.stream(transformer.from())
-//                .map(Class::getCanonicalName)
-//                .map(elementUtils::getTypeElement)
-//                .collect(Collectors.toList());
-//        List<TypeElement> toTypeList = Arrays.stream(transformer.from())
-//                .map(Class::getCanonicalName)
-//                .map(elementUtils::getTypeElement)
-//                .collect(Collectors.toList());
+
+        List<ClassModel> fromClasses= Arrays.stream(transformer.from())
+                .map(Class::getCanonicalName)
+                .map(elementUtils::getTypeElement)
+                .map(ClassModel::of)
+                .collect(Collectors.toList());
+        List<ClassModel> toClasses = Arrays.stream(transformer.from())
+                .map(Class::getCanonicalName)
+                .map(elementUtils::getTypeElement)
+                .map(ClassModel::of)
+                .collect(Collectors.toList());
 
         // generate method for each type
-
 
         String className = e.getQualifiedName() + "Transformer";
 
@@ -106,11 +113,16 @@ public class TransformerProcessor extends AbstractProcessor {
     }
 
     // generate method for fromType -> toType
-    private void generateTransformerMethod(TypeElement from, TypeElement to) {
+    private void generateTransformerMethod(ClassModel from, ClassModel to) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         // 1. collect the fieldName for each of the type
-        List fieldsOfToTypye = elementUtils.getAllMembers(to);
+        Map<String, FieldModel> fromFields = from.getAllFields()
+                .stream()
+                .collect(Collectors.toMap(FieldModel::getName, Function.identity()));
+        Map<String, FieldModel> toFields = from.getAllFields()
+                .stream()
+                .collect(Collectors.toMap(FieldModel::getName, Function.identity()));
     }
 
     private void outputSourceCode(Mustache template, String sourceFileName, TypeElement e, Object scope) {

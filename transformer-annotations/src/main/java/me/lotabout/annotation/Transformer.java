@@ -9,5 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface Transformer {
-    Class[] from() default {};
+    Class<?>[] from() default {};
+    Class<?>[] to() default {};
 }
