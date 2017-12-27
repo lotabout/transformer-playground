@@ -30,6 +30,11 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import com.github.mustachejava.Mustache;
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
 @SupportedAnnotationTypes("me.lotabout.annotation.Transformer")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class TransformerProcessor extends AbstractProcessor {
@@ -41,7 +46,7 @@ public class TransformerProcessor extends AbstractProcessor {
         if (this.transformerTemplate == null) {
             final Messager messager = processingEnv.getMessager();
             messager.printMessage(Diagnostic.Kind.WARNING,
-                    "disabled AutoIndexProcessor due to template loading problem.");
+                    "disabled TransformerProcessor due to template loading problem.");
         }
     }
 
@@ -96,7 +101,7 @@ public class TransformerProcessor extends AbstractProcessor {
         String className = e.getQualifiedName() + "Transformer";
 
         final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        builder.put("ClassName", className);
+        builder.put("className", className);
         outputSourceCode(transformerTemplate, className, e, builder.build());
     }
 

@@ -17,8 +17,12 @@ public interface MustacheUtil {
     MustacheFactory FACTORY = new DefaultMustacheFactory();
 
     static Mustache loadTemplate(String resourceName) {
+<<<<<<< HEAD
         try (Reader reader = new InputStreamReader(Resources
                 .getResource(TransformerProcessor.class, resourceName)
+=======
+        try (Reader reader = new InputStreamReader(Resources.getResource(TransformerProcessor.class, resourceName)
+>>>>>>> use mustache as output engine
                 .openStream(), Charsets.UTF_8)) {
             return FACTORY.compile(reader, resourceName);
         } catch (IOException e) {
