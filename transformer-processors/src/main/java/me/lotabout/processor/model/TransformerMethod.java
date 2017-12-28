@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 public class TransformerMethod {
     private String modifier = "private";
     private String name;
-    private ClassModel from;
-    private ClassModel to;
-    private Map<String, FieldModel> fromFields;
-    private Map<String, FieldModel> toFields;
+    private TypeEntry from;
+    private TypeEntry to;
+    private Map<String, FieldEntry> fromFields;
+    private Map<String, FieldEntry> toFields;
 
-    TransformerMethod (ClassModel from, ClassModel to, String name, boolean isPrivate) {
+    TransformerMethod (TypeEntry from, TypeEntry to, String name, boolean isPrivate) {
         this.from = from;
         this.to = to;
         this.name = name;
@@ -24,10 +24,10 @@ public class TransformerMethod {
 
         this.fromFields = from.getAllFields()
                 .stream()
-                .collect(Collectors.toMap(FieldModel::getName, Function.identity()));
+                .collect(Collectors.toMap(FieldEntry::getName, Function.identity()));
         this.toFields = from.getAllFields()
                 .stream()
-                .collect(Collectors.toMap(FieldModel::getName, Function.identity()));
+                .collect(Collectors.toMap(FieldEntry::getName, Function.identity()));
     }
 
     public String getModifier() {
@@ -38,19 +38,19 @@ public class TransformerMethod {
         return name;
     }
 
-    public Map<String, FieldModel> getFromFields() {
+    public Map<String, FieldEntry> getFromFields() {
         return fromFields;
     }
 
-    public Map<String, FieldModel> getToFields() {
+    public Map<String, FieldEntry> getToFields() {
         return toFields;
     }
 
-    public ClassModel getFrom() {
+    public TypeEntry getFrom() {
         return from;
     }
 
-    public ClassModel getTo() {
+    public TypeEntry getTo() {
         return to;
     }
 
@@ -72,12 +72,12 @@ public class TransformerMethod {
     }
 
 
-    public static TransformerMethod of(ClassModel from, ClassModel to) {
+    public static TransformerMethod of(TypeEntry from, TypeEntry to) {
         // TODO: lower the first letter of the method name
         return new TransformerMethod(from, to, from.getName() + "2" + to.getName(), true);
     }
 
-    public static TransformerMethod of(ClassModel from, ClassModel to, String methodName) {
+    public static TransformerMethod of(TypeEntry from, TypeEntry to, String methodName) {
         return new TransformerMethod(from, to, methodName, false);
     }
 }

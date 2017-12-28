@@ -26,6 +26,8 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
+import me.lotabout.processor.model.EntryFactory;
+import me.lotabout.processor.model.TypeEntry;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -37,7 +39,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import me.lotabout.annotation.Transformer;
-import me.lotabout.processor.model.ClassModel;
 import me.lotabout.processor.model.TransformerMethod;
 
 @SupportedAnnotationTypes("me.lotabout.annotation.Transformer")
@@ -84,33 +85,33 @@ public class TransformerProcessor extends AbstractProcessor {
 
     private void generateTransformer(TypeElement orig) {
         AnnotationMirror transformer = getAnnotationMirror(orig, Transformer.class);
-        ClassModel clazz = ClassModel.of(orig);
+        TypeEntry clazz = EntryFactory.of(orig.asType());
 
         // get the classes from annotation
-        List<TypeElement> fromTypes = Optional.ofNullable(getAnnotationValue(transformer, "from"))
+        List<TypeMirror> fromTypes = Optional.ofNullable(getAnnotationValue(transformer, "from"))
                 .map(annotation -> (List<AnnotationValue>)annotation.getValue())
                 .map(classes -> classes.stream()
-                        .map(annotationClass -> this.asTypeElement((TypeMirror)annotationClass.getValue()))
+                        .map(annotationClass -> (TypeMirror)annotationClass.getValue())
+                        .collect(Collectors.toList()))
+                .orElse(ImmutableList.of());
+        List<TypeMirror> toTypes = Optional.ofNullable(getAnnotationValue(transformer, "to"))
+                .map(annotation -> (List<AnnotationValue>)annotation.getValue())
+                .map(classes -> classes.stream()
+                        .map(annotationClass -> (TypeMirror)annotationClass.getValue())
                         .collect(Collectors.toList()))
                 .orElse(ImmutableList.of());
 
-        List<TypeElement> toTypes = Optional.ofNullable(getAnnotationValue(transformer, "to"))
-                .map(annotation -> (List<AnnotationValue>)annotation.getValue())
-                .map(classes -> classes.stream()
-                        .map(annotationClass -> this.asTypeElement((TypeMirror)annotationClass.getValue()))
-                        .collect(Collectors.toList()))
-                .orElse(ImmutableList.of());
 
         // generate method for each type
         List<TransformerMethod> transformerMethods = new ArrayList<>();
 
         fromTypes.forEach(t -> {
-            ClassModel fromClass = ClassModel.of(t);
+            TypeEntry fromClass = EntryFactory.of(t);
             transformerMethods.add(TransformerMethod.of(fromClass, clazz, "from"+fromClass.getName()));
         });
 
         toTypes.forEach(t -> {
-            ClassModel toClass = ClassModel.of(t);
+            TypeEntry toClass = EntryFactory.of(t);
                 transformerMethods.add(TransformerMethod.of(toClass, clazz, "to"+toClass.getName()));
         });
 

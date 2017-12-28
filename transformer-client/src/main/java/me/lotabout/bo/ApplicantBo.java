@@ -5,6 +5,7 @@ import me.lotabout.pojo.ApplicantPojo;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Transformer(to = {ApplicantBo.class, ApplicantPojo.class})
 public class ApplicantBo {
@@ -13,6 +14,8 @@ public class ApplicantBo {
     private int age;
     private Integer salary;
     private List<EducationVo> educationList;
+    private List<List<String>> additionalInfo;
+    private Map<String, EducationVo> educationVoMap;
 
     public int getId() {
         return id;
