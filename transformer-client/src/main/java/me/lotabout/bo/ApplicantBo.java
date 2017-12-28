@@ -1,11 +1,12 @@
 package me.lotabout.bo;
 
 import me.lotabout.annotation.Transformer;
+import me.lotabout.pojo.ApplicantPojo;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Transformer(to = {ApplicantBo.class})
+@Transformer(to = {ApplicantBo.class, ApplicantPojo.class})
 public class ApplicantBo {
     private int id;
     private String name;

@@ -12,11 +12,16 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 import java.io.IOException;
@@ -24,12 +29,15 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.github.mustachejava.Mustache;
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.function.Function;
@@ -90,18 +98,22 @@ public class TransformerProcessor extends AbstractProcessor {
 
     private void generateTransformer(TypeElement e) {
         Elements elementUtils = processingEnv.getElementUtils();
-        Transformer transformer = e.getAnnotation(Transformer.class);
+        AnnotationMirror transformer = getAnnotationMirror(e, Transformer.class);
 
-        List<ClassModel> fromClasses= Arrays.stream(transformer.from())
-                .map(Class::getCanonicalName)
-                .map(elementUtils::getTypeElement)
-                .map(ClassModel::of)
-                .collect(Collectors.toList());
-        List<ClassModel> toClasses = Arrays.stream(transformer.from())
-                .map(Class::getCanonicalName)
-                .map(elementUtils::getTypeElement)
-                .map(ClassModel::of)
-                .collect(Collectors.toList());
+        List<TypeElement> fromTypes = Optional.ofNullable(getAnnotationValue(transformer, "from"))
+                .map(annotation -> (List<AnnotationValue>)annotation.getValue())
+                .map(classes -> classes.stream()
+                        .map(annotationClass -> this.asTypeElement((TypeMirror)annotationClass.getValue()))
+                        .collect(Collectors.toList()))
+                .orElse(ImmutableList.of());
+
+        List<TypeElement> toTypes = Optional.ofNullable(getAnnotationValue(transformer, "to"))
+                .map(annotation -> (List<AnnotationValue>)annotation.getValue())
+                .map(classes -> classes.stream()
+                        .map(annotationClass -> this.asTypeElement((TypeMirror)annotationClass.getValue()))
+                        .collect(Collectors.toList()))
+                .orElse(ImmutableList.of());
+
 
         // generate method for each type
 
@@ -141,5 +153,29 @@ public class TransformerProcessor extends AbstractProcessor {
     private static String getPackageName(TypeElement e) {
         final PackageElement packageElement = (PackageElement)e.getEnclosingElement();
         return packageElement.isUnnamed() ? "" : packageElement.getQualifiedName().toString();
+    }
+
+    private static AnnotationMirror getAnnotationMirror(TypeElement typeElement, Class<?> clazz) {
+        String clazzName = clazz.getName();
+        for(AnnotationMirror m : typeElement.getAnnotationMirrors()) {
+            if(m.getAnnotationType().toString().equals(clazzName)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    private static AnnotationValue getAnnotationValue(AnnotationMirror annotationMirror, String key) {
+        for(Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : annotationMirror.getElementValues().entrySet() ) {
+            if(entry.getKey().getSimpleName().toString().equals(key)) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    private TypeElement asTypeElement(TypeMirror typeMirror) {
+        Types TypeUtils = this.processingEnv.getTypeUtils();
+        return (TypeElement)TypeUtils.asElement(typeMirror);
     }
 }
