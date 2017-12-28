@@ -11,7 +11,7 @@ public class ApplicantBo {
     private int id;
     private String name;
     private int age;
-    private BigDecimal salary;
+    private Integer salary;
     private List<EducationVo> educationList;
 
     public int getId() {
@@ -38,11 +38,11 @@ public class ApplicantBo {
         this.age = age;
     }
 
-    public BigDecimal getSalary() {
+    public Integer getSalary() {
         return salary;
     }
 
-    public void setSalary(BigDecimal salary) {
+    public void setSalary(Integer salary) {
         this.salary = salary;
     }
 
