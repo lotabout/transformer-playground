@@ -1,6 +1,8 @@
 package me.lotabout.processor.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.lang.model.type.DeclaredType;
@@ -43,7 +45,12 @@ public class MapClassEntry extends AbstractClassEntry {
     }
 
     @Override public String transformTo(TypeEntry to, String value) {
-        return null;
+        TypeEntry innerClassOfA = getBoundedClass(this).get(1);
+        TypeEntry innerClassOfB = getBoundedClass((MapClassEntry)to).get(1);
+
+        return value + ".entrySet().stream().collect(Collectors.toMap(k -> k, v -> "
+                + innerClassOfA.transformTo(innerClassOfB, "v")
+                + "))";
     }
 
     private static List<TypeEntry> getBoundedClass(MapClassEntry clazz) {

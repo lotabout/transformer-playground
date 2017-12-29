@@ -2,23 +2,17 @@ package ${clazz.packageName};
 
 public class ${clazz.name}Transformer {
 #foreach($m in $transformers)
-    ${m.modifier} ${m.to.qualifiedName} ${m.name}(${m.from.qualifiedName} from)} {
-        ${m.to.qualifiedName} to = ${m.to.qualifiedName}.newInstance();
-
-        #set($from = $m.fromFields)
-        #set($to = $m.toFields)
-        #foreach($fieldName in $m.commonFieldNames)
-            #set($f = $from[$fieldName])
-            #set($t = $to[$fieldName])
-
-            // from: $f.typeName to: $t.typeName
-            #if(${t.isNeedTransform($f)})
-                to.${t.setter}(${t.transformerMethod($f)}(from.${f.getter}()));
-            #else
-                to.${t.setter}(from.${f.getter}());
-            #end
-        #end
-
+    ${m.modifier} ${m.to.qualifiedName} ${m.name}(${m.from.qualifiedName} from) {
+        ${m.to.qualifiedName} to = ${m.to.qualifiedName}.class.newInstance();
+#set($from = $m.fromFields)
+#set($to = $m.toFields)
+#foreach($fieldName in $m.commonFieldNames)
+    #set($f = $from[$fieldName])
+    #set($t = $to[$fieldName])
+    #set($ftype = $f.type)
+    #set($ttype = $t.type)
+        to.${t.setter}(${ftype.transformTo($ttype, "from.${f.getter}()")});
+#end
         return to;
     }
 #end

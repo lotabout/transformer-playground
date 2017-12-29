@@ -22,12 +22,8 @@ public class TransformerMethod {
         this.name = name;
         this.modifier = isPrivate ? "private" : "public";
 
-        this.fromFields = from.getAllFields()
-                .stream()
-                .collect(Collectors.toMap(FieldEntry::getName, Function.identity()));
-        this.toFields = from.getAllFields()
-                .stream()
-                .collect(Collectors.toMap(FieldEntry::getName, Function.identity()));
+        this.fromFields = from.getAllFields().stream().collect(Collectors.toMap(FieldEntry::getName, Function.identity()));
+        this.toFields = to.getAllFields().stream().collect(Collectors.toMap(FieldEntry::getName, Function.identity()));
     }
 
     public String getModifier() {

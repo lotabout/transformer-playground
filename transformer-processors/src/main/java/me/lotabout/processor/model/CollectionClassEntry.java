@@ -53,12 +53,11 @@ class CollectionClassEntry extends AbstractClassEntry {
     @Override public String transformTo(TypeEntry to, String value) {
         assert this.ableToTransformDirectlyTo(to) || this.ableToTransformByTransformerTo(to);
 
-        String variable = StringUtil.decapitalize(this.getName());
         TypeEntry innerClassOfA = getBoundedClass(this).get(0);
         TypeEntry innerClassOfB = getBoundedClass((CollectionClassEntry)to).get(0);
 
-        return value + ".stream().map(" + variable + "->"
-                + innerClassOfA.transformTo(innerClassOfB, variable)
+        return value + ".stream().map(l -> "
+                + innerClassOfA.transformTo(innerClassOfB, "l")
                 + ").collect(Collectors.toList())";
     }
 }

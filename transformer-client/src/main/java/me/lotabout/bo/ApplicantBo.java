@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-@Transformer(to = {ApplicantBo.class, ApplicantPojo.class})
+@Transformer(to = {ApplicantPojo.class})
 public class ApplicantBo {
     private int id;
     private String name;
