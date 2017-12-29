@@ -11,7 +11,7 @@ public class FieldEntryImpl implements FieldEntry {
 
     @Override
     public String getName() {
-        return null;
+        return self.getSimpleName().toString();
     }
 
     @Override

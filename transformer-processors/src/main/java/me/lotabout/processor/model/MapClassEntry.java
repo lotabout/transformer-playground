@@ -42,6 +42,10 @@ public class MapClassEntry extends AbstractClassEntry {
                 && innerClassesOfA.get(1).ableToTransformByTransformerTo(innerClassesOfB.get(1));
     }
 
+    @Override public String transformTo(TypeEntry to, String value) {
+        return null;
+    }
+
     private static List<TypeEntry> getBoundedClass(MapClassEntry clazz) {
         return ((DeclaredType)clazz.getRaw()).getTypeArguments()
                 .stream()

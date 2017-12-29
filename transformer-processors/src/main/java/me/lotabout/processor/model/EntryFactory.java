@@ -7,6 +7,9 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 
 public class EntryFactory {
+    private int id;
+
+
     public static TypeEntry of(TypeMirror type) {
         switch (type.getKind()) {
             case BOOLEAN:

@@ -1,14 +1,8 @@
 package me.lotabout.processor.model;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.type.TypeMirror;
-
-import com.google.common.collect.ImmutableList;
-
-import me.lotabout.annotation.Transformer;
 
 public class ConcreteClassEntry extends AbstractClassEntry {
     public ConcreteClassEntry(TypeMirror raw) {
@@ -43,21 +37,26 @@ public class ConcreteClassEntry extends AbstractClassEntry {
         // Transform: A -> B
         //        (this)   (to)
 
-        List<TypeEntry> toClassesOfA= getTransformerClasses(this, "to");
-        List<TypeEntry> fromClassesOfB = getTransformerClasses(to, "from");
+        List<TypeEntry> toClassesOfA= TypeEntry.getTransformerClasses(this, "to");
+        List<TypeEntry> fromClassesOfB = TypeEntry.getTransformerClasses(to, "from");
 
         return (toClassesOfA.stream().anyMatch(t -> t.getQualifiedName().equals(to.getQualifiedName()))
                 || fromClassesOfB.stream().anyMatch(t -> t.getQualifiedName().equals(this.getQualifiedName())));
     }
 
-    private static List<TypeEntry> getTransformerClasses(TypeEntry clazz, String key) {
-        return clazz.getAnnotationMirror(Transformer.class)
-                .flatMap(annotation -> TypeEntry.getAnnotationValue(annotation, key))
-                .map(annotation -> (List<AnnotationValue>)annotation.getValue())
-                .map(classes -> classes.stream()
-                        .map(annotationClass -> (TypeMirror)annotationClass.getValue())
-                        .map(EntryFactory::of)
-                        .collect(Collectors.toList()))
-                .orElse(ImmutableList.of());
+    @Override public String transformTo(TypeEntry to, String value) {
+        assert this.ableToTransformDirectlyTo(to) || this.ableToTransformByTransformerTo(to);
+
+        if (this.ableToTransformDirectlyTo(to)) {
+            return value;
+        }
+
+        // else, able to transform via transformer
+        List<TypeEntry> toClassesOfA= TypeEntry.getTransformerClasses(this, "to");
+        if (toClassesOfA.stream().anyMatch(t -> t.getQualifiedName().equals(to.getQualifiedName()))) {
+            return this.getName()+"Transformer.to"+to.getName()+"("+value+")";
+        } else {
+            return to.getName()+"Transformer.from"+this.getName()+"("+value+")";
+        }
     }
 }

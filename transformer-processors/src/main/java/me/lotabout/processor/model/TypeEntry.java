@@ -3,10 +3,16 @@ package me.lotabout.processor.model;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.type.TypeMirror;
+
+import com.google.common.collect.ImmutableList;
+
+import me.lotabout.annotation.Transformer;
 
 public interface TypeEntry {
     String getQualifiedName();
@@ -37,4 +43,17 @@ public interface TypeEntry {
         }
         return Optional.empty();
     }
+
+    static List<TypeEntry> getTransformerClasses(TypeEntry clazz, String key) {
+        return clazz.getAnnotationMirror(Transformer.class)
+                .flatMap(annotation -> TypeEntry.getAnnotationValue(annotation, key))
+                .map(annotation -> (List<AnnotationValue>)annotation.getValue())
+                .map(classes -> classes.stream()
+                        .map(annotationClass -> (TypeMirror)annotationClass.getValue())
+                        .map(EntryFactory::of)
+                        .collect(Collectors.toList()))
+                .orElse(ImmutableList.of());
+    }
+
+    String transformTo(TypeEntry to, String value);
 }

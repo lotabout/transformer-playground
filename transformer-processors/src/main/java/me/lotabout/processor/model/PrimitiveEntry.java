@@ -71,4 +71,9 @@ public class PrimitiveEntry implements TypeEntry {
     @Override public Optional<AnnotationMirror> getAnnotationMirror(Class<?> clazz) {
         return Optional.empty();
     }
+
+    @Override public String transformTo(TypeEntry to, String value) {
+        assert this.ableToTransformDirectlyTo(to);
+        return value;
+    }
 }

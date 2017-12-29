@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 
+import me.lotabout.processor.util.StringUtil;
+
 class CollectionClassEntry extends AbstractClassEntry {
     public CollectionClassEntry(TypeMirror raw) {
         super(raw);
@@ -46,5 +48,17 @@ class CollectionClassEntry extends AbstractClassEntry {
                 .stream()
                 .map(EntryFactory::of)
                 .collect(Collectors.toList());
+    }
+
+    @Override public String transformTo(TypeEntry to, String value) {
+        assert this.ableToTransformDirectlyTo(to) || this.ableToTransformByTransformerTo(to);
+
+        String variable = StringUtil.decapitalize(this.getName());
+        TypeEntry innerClassOfA = getBoundedClass(this).get(0);
+        TypeEntry innerClassOfB = getBoundedClass((CollectionClassEntry)to).get(0);
+
+        return value + ".stream().map(" + variable + "->"
+                + innerClassOfA.transformTo(innerClassOfB, variable)
+                + ").collect(Collectors.toList())";
     }
 }
