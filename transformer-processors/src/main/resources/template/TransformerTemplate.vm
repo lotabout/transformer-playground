@@ -6,16 +6,18 @@ import $import;
 
 public class ${clazz.name}Transformer {
 #foreach($m in $transformers)
-    ${m.modifier} ${m.to.name} ${m.name}(${m.from.name} from) {
+    ${m.modifier} static ${m.to.name} ${m.name}(${m.from.name} from) {
         ${m.to.name} to = new ${m.to.name}();
 #set($from = $m.fromFields)
 #set($to = $m.toFields)
 #foreach($fieldName in $m.commonFieldNames)
-    #set($f = $from[$fieldName])
-    #set($t = $to[$fieldName])
-    #set($ftype = $f.type)
-    #set($ttype = $t.type)
+#set($f = $from[$fieldName])
+#set($t = $to[$fieldName])
+#set($ftype = $f.type)
+#set($ttype = $t.type)
+#if(${ftype.ableToTransformDirectlyTo($ttype)} || ${ftype.ableToTransformByTransformerTo($ttype)})
         to.${t.setter}(${ftype.transformTo($ttype, "from.${f.getter}()")});
+#end
 #end
         return to;
     }

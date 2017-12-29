@@ -65,6 +65,6 @@ public class ConcreteClassEntry extends AbstractClassEntry {
     }
 
     @Override public Set<String> getImports() {
-        return new HashSet<>(Collections.singletonList(this.getQualifiedName()));
+        return new HashSet<>(Collections.singletonList(this.getPackageName() + ".*"));
     }
 }

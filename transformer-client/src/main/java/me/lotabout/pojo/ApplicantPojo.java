@@ -1,9 +1,5 @@
 package me.lotabout.pojo;
 
-import lombok.Data;
-import me.lotabout.annotation.Transformer;
-import me.lotabout.bo.ApplicantBo;
-
 import java.math.BigDecimal;
 import java.util.List;
 
