@@ -1,5 +1,9 @@
 package me.lotabout.processor.model;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 
 public class MapClassEntry extends AbstractClassEntry {
@@ -22,13 +26,26 @@ public class MapClassEntry extends AbstractClassEntry {
         return false;
     }
 
-    @Override
-    public boolean ableToTransformByMethodFrom(TypeEntry from) {
-        return from.isMap();
+    @Override public boolean ableToTransformDirectlyTo(TypeEntry to) {
+        return false;
     }
 
     @Override
-    public boolean needTransformMethodFrom(TypeEntry from) {
-        return false;
+    public boolean ableToTransformByTransformerTo(TypeEntry to) {
+        if (!(to instanceof MapClassEntry)) {
+            return false;
+        }
+        // check inner types could be transformed
+        List<TypeEntry> innerClassesOfA = getBoundedClass(this);
+        List<TypeEntry> innerClassesOfB = getBoundedClass((MapClassEntry)to);
+        return innerClassesOfA.get(0).ableToTransformDirectlyTo(innerClassesOfB.get(0))
+                && innerClassesOfA.get(1).ableToTransformByTransformerTo(innerClassesOfB.get(1));
+    }
+
+    private static List<TypeEntry> getBoundedClass(MapClassEntry clazz) {
+        return ((DeclaredType)clazz.getRaw()).getTypeArguments()
+                .stream()
+                .map(EntryFactory::of)
+                .collect(Collectors.toList());
     }
 }

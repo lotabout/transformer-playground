@@ -1,9 +1,11 @@
 package me.lotabout.processor.model;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class PrimitiveEntry implements TypeEntry {
     private TypeMirror self;
@@ -57,13 +59,16 @@ public class PrimitiveEntry implements TypeEntry {
         return self.getKind() == TypeKind.BOOLEAN;
     }
 
-    @Override
-    public boolean ableToTransformByMethodFrom(TypeEntry from) {
-        return this.getQualifiedName().equals(from.getQualifiedName());
+    @Override public boolean ableToTransformDirectlyTo(TypeEntry to) {
+        return this.getQualifiedName().equals(to.getQualifiedName());
     }
 
     @Override
-    public boolean needTransformMethodFrom(TypeEntry from) {
+    public boolean ableToTransformByTransformerTo(TypeEntry to) {
         return false;
+    }
+
+    @Override public Optional<AnnotationMirror> getAnnotationMirror(Class<?> clazz) {
+        return Optional.empty();
     }
 }

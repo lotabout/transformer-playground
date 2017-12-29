@@ -27,6 +27,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
 import me.lotabout.processor.model.EntryFactory;
+import me.lotabout.processor.model.FieldEntry;
 import me.lotabout.processor.model.TypeEntry;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -64,12 +65,12 @@ public class TransformerProcessor extends AbstractProcessor {
         return ImmutableSet.of(Transformer.class.getCanonicalName());
     }
 
-    private void debug(String message, Element e, Object... objects) {
+    private void debug(Element e, String message, Object... objects) {
         final Messager messager = processingEnv.getMessager();
         messager.printMessage(Diagnostic.Kind.NOTE, String.format(message, objects), e);
     }
 
-    private void error(String message, Element e, Object... objects) {
+    private void error(Element e, String message, Object... objects) {
         final Messager messager = processingEnv.getMessager();
         messager.printMessage(Diagnostic.Kind.ERROR, String.format(message, objects), e);
     }
@@ -121,6 +122,48 @@ public class TransformerProcessor extends AbstractProcessor {
         context.put("transformers", transformerMethods);
 
         outputSourceCode(transformerTemplate, context, clazz.getName() + "Transformer", orig);
+    }
+
+    private List<TransformerMethod> collectSubTransformers(TransformerMethod method) {
+        List<TransformerMethod> ret = new ArrayList<>();
+
+        List<String> commonFieldNames = method.getCommonFieldNames();
+        Map<String, FieldEntry> fromFields = method.getFromFields();
+        Map<String, FieldEntry> toFields= method.getToFields();
+        for (String fieldName: commonFieldNames) {
+            FieldEntry from = fromFields.get(fieldName);
+            FieldEntry to = toFields.get(fieldName);
+
+//            if (!from.getType().needTransform(to)) {
+//                continue;
+//            }
+//
+//            // Not able to generate transformation method
+//            if ((from.isPrimitive() || to.isPrimitive())) {
+//                error(method.getFrom().getRaw(), "type mismatch of field %s(%s -> %s)", fieldName, from.getTypeName(), to.getTypeName());
+//            }
+//
+//            // is collection, but collection type mismatch
+//            if (from.getType().isCollection() && !to.getType().isCollection()
+//                    || !from.getType().isCollection() && to.getType().isCollection()
+//                    || from.getType().isMap() && !to.getType().isMap()
+//                    || !from.getType().isMap() && to.getType().isMap()) {
+//                error(method.getFrom().getRaw(), "type mismatch of field %s(%s -> %s)", fieldName, from.getTypeName(), to.getTypeName());
+//            }
+//
+//            if (from.getType().isCollection() && to.getType().isCollection()) {
+//
+//            }
+//
+//            if (from.getType().isMap() && to.getType().isMap()) {
+//
+//            }
+//
+//            // transform from class to class, e.g. XXXDTO -> XXXPOJO
+//            ret.add(TransformerMethod.of(from.getType(), to.getType()));
+        }
+
+        return ret;
     }
 
     private void outputSourceCode(String templateName, VelocityContext context, String sourceFileName, TypeElement e) {

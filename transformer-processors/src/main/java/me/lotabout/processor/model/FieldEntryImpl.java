@@ -16,7 +16,7 @@ public class FieldEntryImpl implements FieldEntry {
 
     @Override
     public TypeEntry getType() {
-        return null;
+        return EntryFactory.of(self.asType());
     }
 
     @Override
