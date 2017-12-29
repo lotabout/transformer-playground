@@ -31,6 +31,11 @@ public abstract class AbstractClassEntry implements TypeEntry {
     }
 
     @Override
+    public String getFullName() {
+        return this.getName();
+    }
+
+    @Override
     public String getPackageName() {
         final PackageElement packageElement = (PackageElement)self.getEnclosingElement();
         return packageElement.isUnnamed() ? "" : packageElement.getQualifiedName().toString();

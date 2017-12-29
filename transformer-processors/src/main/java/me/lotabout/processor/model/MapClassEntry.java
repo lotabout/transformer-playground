@@ -16,6 +16,14 @@ public class MapClassEntry extends AbstractClassEntry {
     }
 
     @Override
+    public String getFullName() {
+        List<TypeEntry> innerClasses = getBoundedClass(this);;
+        TypeEntry keyType = innerClasses.get(0);
+        TypeEntry valueType = innerClasses.get(1);
+        return this.getName() + "<" + keyType.getFullName() + ", " + valueType.getFullName() + ">";
+    }
+
+    @Override
     public boolean isPrimitive() {
         return false;
     }

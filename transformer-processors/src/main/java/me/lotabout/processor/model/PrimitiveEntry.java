@@ -26,6 +26,11 @@ public class PrimitiveEntry implements TypeEntry {
     }
 
     @Override
+    public String getFullName() {
+        return this.getName();
+    }
+
+    @Override
     public String getPackageName() {
         return "";
     }

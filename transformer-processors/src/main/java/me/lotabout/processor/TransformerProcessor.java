@@ -60,12 +60,12 @@ public class TransformerProcessor extends AbstractProcessor {
         return ImmutableSet.of(Transformer.class.getCanonicalName());
     }
 
-    private void debug(Element e, String message, Object... objects) {
+    public void debug(Element e, String message, Object... objects) {
         final Messager messager = processingEnv.getMessager();
         messager.printMessage(Diagnostic.Kind.NOTE, String.format(message, objects), e);
     }
 
-    private void error(Element e, String message, Object... objects) {
+    public void error(Element e, String message, Object... objects) {
         final Messager messager = processingEnv.getMessager();
         messager.printMessage(Diagnostic.Kind.ERROR, String.format(message, objects), e);
     }
@@ -100,6 +100,7 @@ public class TransformerProcessor extends AbstractProcessor {
         context.put("clazz", clazz);
         context.put("transformers", transformerMethods);
         context.put("importList", importList);
+        context.put("processor", this);
         outputSourceCode(transformerTemplate, context, clazz.getName() + "Transformer", orig);
     }
 

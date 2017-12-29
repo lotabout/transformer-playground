@@ -18,6 +18,7 @@ import me.lotabout.annotation.Transformer;
 public interface TypeEntry {
     String getQualifiedName();
     String getName();
+    String getFullName();
     String getPackageName();
 
     List<FieldEntry> getAllFields();

@@ -17,7 +17,19 @@ public class ${clazz.name}Transformer {
 #set($ttype = $t.type)
 #if(${ftype.ableToTransformDirectlyTo($ttype)} || ${ftype.ableToTransformByTransformerTo($ttype)})
         to.${t.setter}(${ftype.transformTo($ttype, "from.${f.getter}()")});
+#else
+        ${processor.error($t.element, "Unable to transform $fieldName from ${ttype.fullName} -> ${ftype.fullName}. Try to add @Transformer annotation to the types or unify the type of the field.")}
 #end
+#end
+
+        // Fields only in ${m.from.name}:
+#foreach($fieldName in $m.fromOnlyFieldNames)
+        // $fieldName
+#end
+
+        // Fields only in ${m.to.name}:
+#foreach($fieldName in $m.toOnlyFieldNames)
+        // $fieldName
 #end
         return to;
     }
