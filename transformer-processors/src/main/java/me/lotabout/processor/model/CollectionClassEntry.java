@@ -1,6 +1,9 @@
 package me.lotabout.processor.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.lang.model.type.DeclaredType;
@@ -60,4 +63,14 @@ class CollectionClassEntry extends AbstractClassEntry {
                 + innerClassOfA.transformTo(innerClassOfB, "l")
                 + ").collect(Collectors.toList())";
     }
+
+    @Override public Set<String> getImports() {
+        Set<String> ret = new HashSet<>();
+        ret.add("java.util.stream.Collectors");
+        ret.add(this.getQualifiedName());
+        TypeEntry innerClass = getBoundedClass(this).get(0);
+        ret.addAll(innerClass.getImports());
+        return ret;
+    }
+
 }

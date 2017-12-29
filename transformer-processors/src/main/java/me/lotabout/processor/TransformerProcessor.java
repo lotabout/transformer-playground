@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,10 +90,16 @@ public class TransformerProcessor extends AbstractProcessor {
         fromTypes.forEach(c -> transformerMethods.add(TransformerMethod.of(c, clazz, "from"+c.getName())));
         toTypes.forEach(c -> transformerMethods.add(TransformerMethod.of(clazz, c, "to"+c.getName())));
 
+        Set<String> imports = new HashSet<>();
+        transformerMethods.forEach(m -> imports.addAll(m.getAllImports()));
+        List<String> importList = new ArrayList<>(imports);
+        Collections.sort(importList);
+
         // write contents
         VelocityContext context = new VelocityContext();
         context.put("clazz", clazz);
         context.put("transformers", transformerMethods);
+        context.put("importList", importList);
         outputSourceCode(transformerTemplate, context, clazz.getName() + "Transformer", orig);
     }
 

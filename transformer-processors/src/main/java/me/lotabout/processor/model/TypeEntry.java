@@ -3,6 +3,7 @@ package me.lotabout.processor.model;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -56,4 +57,5 @@ public interface TypeEntry {
     }
 
     String transformTo(TypeEntry to, String value);
+    Set<String> getImports();
 }

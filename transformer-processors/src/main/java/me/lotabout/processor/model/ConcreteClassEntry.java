@@ -1,6 +1,10 @@
 package me.lotabout.processor.model;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.lang.model.type.TypeMirror;
 
@@ -58,5 +62,9 @@ public class ConcreteClassEntry extends AbstractClassEntry {
         } else {
             return to.getName()+"Transformer.from"+this.getName()+"("+value+")";
         }
+    }
+
+    @Override public Set<String> getImports() {
+        return new HashSet<>(Collections.singletonList(this.getQualifiedName()));
     }
 }

@@ -6,6 +6,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class PrimitiveEntry implements TypeEntry {
     private TypeMirror self;
@@ -75,5 +76,9 @@ public class PrimitiveEntry implements TypeEntry {
     @Override public String transformTo(TypeEntry to, String value) {
         assert this.ableToTransformDirectlyTo(to);
         return value;
+    }
+
+    @Override public Set<String> getImports() {
+        return Collections.emptySet();
     }
 }

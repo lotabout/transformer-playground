@@ -1,9 +1,13 @@
 package ${clazz.packageName};
 
+#foreach($import in $importList)
+import $import;
+#end
+
 public class ${clazz.name}Transformer {
 #foreach($m in $transformers)
-    ${m.modifier} ${m.to.qualifiedName} ${m.name}(${m.from.qualifiedName} from) {
-        ${m.to.qualifiedName} to = ${m.to.qualifiedName}.class.newInstance();
+    ${m.modifier} ${m.to.name} ${m.name}(${m.from.name} from) {
+        ${m.to.name} to = new ${m.to.name}();
 #set($from = $m.fromFields)
 #set($to = $m.toFields)
 #foreach($fieldName in $m.commonFieldNames)

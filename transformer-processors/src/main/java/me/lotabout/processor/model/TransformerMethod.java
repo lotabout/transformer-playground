@@ -67,6 +67,14 @@ public class TransformerMethod {
         return new ArrayList<>(toOnlyFields);
     }
 
+    public Set<String> getAllImports() {
+        Set<String> ret = new HashSet<>();
+        ret.addAll(from.getImports());
+        ret.addAll(to.getImports());
+        this.getFromFields().values().forEach(field -> ret.addAll(field.getType().getImports()));
+        this.getToFields().values().forEach(field -> ret.addAll(field.getType().getImports()));
+        return ret;
+    }
 
     public static TransformerMethod of(TypeEntry from, TypeEntry to) {
         // TODO: lower the first letter of the method name
