@@ -2,11 +2,9 @@ package me.lotabout.processor;
 
 import com.google.common.truth.Truth;
 import com.google.testing.compile.JavaFileObjects;
-import me.lotabout.annotation.Transformer;
 import org.junit.Test;
 
 import javax.tools.JavaFileObject;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

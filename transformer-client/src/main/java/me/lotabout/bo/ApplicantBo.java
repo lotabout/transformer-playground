@@ -1,5 +1,6 @@
 package me.lotabout.bo;
 
+import lombok.Data;
 import me.lotabout.annotation.Transformer;
 import me.lotabout.pojo.ApplicantPojo;
 
@@ -7,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+@Data
 @Transformer(to = {ApplicantPojo.class})
 public class ApplicantBo {
     private int id;
@@ -16,44 +18,4 @@ public class ApplicantBo {
     private List<EducationVo> educationList;
     private List<List<String>> additionalInfo;
     private Map<String, EducationVo> educationVoMap;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public Integer getSalary() {
-        return salary;
-    }
-
-    public void setSalary(Integer salary) {
-        this.salary = salary;
-    }
-
-    public List<EducationVo> getEducationList() {
-        return educationList;
-    }
-
-    public void setEducationList(List<EducationVo> educationList) {
-        this.educationList = educationList;
-    }
 }

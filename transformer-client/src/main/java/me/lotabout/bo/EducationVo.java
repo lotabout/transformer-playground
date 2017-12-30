@@ -1,8 +1,11 @@
 package me.lotabout.bo;
 
+import lombok.Data;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 
+@Data
 public class EducationVo {
     ZonedDateTime startTime;
     ZonedDateTime endTime;

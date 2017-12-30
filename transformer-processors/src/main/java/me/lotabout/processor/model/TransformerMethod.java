@@ -51,20 +51,27 @@ public class TransformerMethod {
     }
 
     public List<String> getCommonFieldNames() {
-        Set<String> commonFields = new HashSet<>(this.fromFields.keySet());
-        commonFields.retainAll(this.toFields.keySet());
-        return new ArrayList<>(commonFields);
+        // must retain the order of fields;
+        Set<String> fromFields = new HashSet<>(this.fromFields.keySet());
+        return this.to.getAllFields().stream()
+                .map(FieldEntry::getName)
+                .filter(fromFields::contains)
+                .collect(Collectors.toList());
     }
 
     public List<String> getFromOnlyFieldNames() {
-        Set<String> fromOnlyFields = new HashSet<>(this.fromFields.keySet());
-        fromOnlyFields.removeAll(this.toFields.keySet());
-        return new ArrayList<>(fromOnlyFields);
+        Set<String> toFields = new HashSet<>(this.toFields.keySet());
+        return this.from.getAllFields().stream()
+                .map(FieldEntry::getName)
+                .filter(f -> !toFields.contains(f))
+                .collect(Collectors.toList());
     }
     public List<String> getToOnlyFieldNames() {
-        Set<String> toOnlyFields = new HashSet<>(this.toFields.keySet());
-        toOnlyFields.removeAll(this.toFields.keySet());
-        return new ArrayList<>(toOnlyFields);
+        Set<String> fromFields = new HashSet<>(this.fromFields.keySet());
+        return this.to.getAllFields().stream()
+                .map(FieldEntry::getName)
+                .filter(f -> !fromFields.contains(f))
+                .collect(Collectors.toList());
     }
 
     public Set<String> getAllImports() {
