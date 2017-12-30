@@ -51,16 +51,19 @@ public class MapClassEntry extends AbstractClassEntry {
         List<TypeEntry> innerClassesOfA = getBoundedClass(this);
         List<TypeEntry> innerClassesOfB = getBoundedClass((MapClassEntry)to);
         return innerClassesOfA.get(0).ableToTransformDirectlyTo(innerClassesOfB.get(0))
-                && innerClassesOfA.get(1).ableToTransformByTransformerTo(innerClassesOfB.get(1));
+                && innerClassesOfA.get(1).ableToTransformTo(innerClassesOfB.get(1));
     }
 
-    @Override public String transformTo(TypeEntry to, String value) {
+    @Override public String transformTo(TypeEntry to, String value, int level) {
         TypeEntry innerClassOfA = getBoundedClass(this).get(1);
         TypeEntry innerClassOfB = getBoundedClass((MapClassEntry)to).get(1);
 
-        return value + ".entrySet().stream().collect(Collectors.toMap(k -> k, v -> "
-                + innerClassOfA.transformTo(innerClassOfB, "v")
-                + "))";
+        String keyVar = "k" + String.valueOf(level);
+        String valVar = "v" + String.valueOf(level);
+
+        return String.format("%s.entrySet().stream().collect(Collectors.toMap(%s -> %s.getKey(), %s -> %s))",
+                value, keyVar, keyVar, valVar,
+                innerClassOfA.transformTo(innerClassOfB, valVar + ".getValue()", level+1));
     }
 
     @Override public Set<String> getImports() {

@@ -27,6 +27,7 @@ public class TransformerProcessorTest {
                 .compilesWithoutError();
     }
 
+    @Test
     public void allMatchedFieldsShouldBeTransformed() {
         String topic = "allmatch";
         Truth.assert_()

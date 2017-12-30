@@ -35,6 +35,10 @@ public interface TypeEntry {
     // two classes should implement transformer class to make it return true
     boolean ableToTransformByTransformerTo(TypeEntry to);
 
+    default boolean ableToTransformTo(TypeEntry to) {
+        return this.ableToTransformDirectlyTo(to) || this.ableToTransformByTransformerTo(to);
+    }
+
     Optional<AnnotationMirror> getAnnotationMirror(Class<?> clazz);
 
     static Optional<AnnotationValue> getAnnotationValue(AnnotationMirror annotationMirror, String key) {
@@ -57,6 +61,11 @@ public interface TypeEntry {
                 .orElse(ImmutableList.of());
     }
 
-    String transformTo(TypeEntry to, String value);
+    default String transformTo(TypeEntry to, String value) {
+        return transformTo(to, value, 1);
+    }
+
+    // level is for List or Map. List<List<...>>, level will be used to generate variable names
+    String transformTo(TypeEntry to, String value, int level);
     Set<String> getImports();
 }

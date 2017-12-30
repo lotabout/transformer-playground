@@ -78,7 +78,7 @@ public class PrimitiveEntry implements TypeEntry {
         return Optional.empty();
     }
 
-    @Override public String transformTo(TypeEntry to, String value) {
+    @Override public String transformTo(TypeEntry to, String value, int level) {
         assert this.ableToTransformDirectlyTo(to);
         return value;
     }

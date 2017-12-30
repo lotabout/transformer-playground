@@ -45,8 +45,7 @@ class CollectionClassEntry extends AbstractClassEntry {
         // check inner types could be transformed
         TypeEntry innerClassOfA = getBoundedClass(this).get(0);
         TypeEntry innerClassOfB = getBoundedClass((CollectionClassEntry)to).get(0);
-        return innerClassOfA.ableToTransformDirectlyTo(innerClassOfB)
-                || innerClassOfA.ableToTransformByTransformerTo(innerClassOfB) ;
+        return innerClassOfA.ableToTransformTo(innerClassOfB);
     }
 
     private static List<TypeEntry> getBoundedClass(CollectionClassEntry clazz) {
@@ -56,15 +55,15 @@ class CollectionClassEntry extends AbstractClassEntry {
                 .collect(Collectors.toList());
     }
 
-    @Override public String transformTo(TypeEntry to, String value) {
+    @Override public String transformTo(TypeEntry to, String value, int level) {
         assert this.ableToTransformDirectlyTo(to) || this.ableToTransformByTransformerTo(to);
 
         TypeEntry innerClassOfA = getBoundedClass(this).get(0);
         TypeEntry innerClassOfB = getBoundedClass((CollectionClassEntry)to).get(0);
+        String listVar = "l" + String.valueOf(level);
 
-        return value + ".stream().map(l -> "
-                + innerClassOfA.transformTo(innerClassOfB, "l")
-                + ").collect(Collectors.toList())";
+        return String.format("%s.stream().map(%s -> %s).collect(Collectors.toList())",
+                value, listVar, innerClassOfA.transformTo(innerClassOfB, listVar, level + 1));
     }
 
     @Override public Set<String> getImports() {

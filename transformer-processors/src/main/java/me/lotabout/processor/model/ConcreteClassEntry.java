@@ -48,7 +48,7 @@ public class ConcreteClassEntry extends AbstractClassEntry {
                 || fromClassesOfB.stream().anyMatch(t -> t.getQualifiedName().equals(this.getQualifiedName())));
     }
 
-    @Override public String transformTo(TypeEntry to, String value) {
+    @Override public String transformTo(TypeEntry to, String value, int level) {
         assert this.ableToTransformDirectlyTo(to) || this.ableToTransformByTransformerTo(to);
 
         if (this.ableToTransformDirectlyTo(to)) {
