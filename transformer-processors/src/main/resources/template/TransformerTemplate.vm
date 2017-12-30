@@ -24,12 +24,12 @@ public class ${clazz.name}Transformer {
 
         // Fields only in ${m.from.name}:
 #foreach($fieldName in $m.fromOnlyFieldNames)
-        // $fieldName
+        // ${from[$fieldName].type.fullName}: $fieldName
 #end
 
         // Fields only in ${m.to.name}:
 #foreach($fieldName in $m.toOnlyFieldNames)
-        // $fieldName
+        // ${to[$fieldName].type.fullName}: $fieldName
 #end
         return to;
     }

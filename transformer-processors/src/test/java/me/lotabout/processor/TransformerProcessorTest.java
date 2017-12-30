@@ -37,6 +37,19 @@ public class TransformerProcessorTest {
                 .generatesSources(getResourceFile(topic, "AllMatchTransformer.java"));
     }
 
+    @Test
+    public void fieldsWithDifferentNameShouldNotBeTransformed() {
+        // Note that the test will not test whether the comments in generated files are the same or not.
+        String topic = "fieldcheck";
+        Truth.assert_()
+                .about(javaSources())
+                .that(getResourceFiles(topic, "FieldsWithDifferentNameBo.java", "FieldsWithDifferentNamePojo.java"))
+                .processedWith(new TransformerProcessor())
+                .compilesWithoutError()
+                .and()
+                .generatesSources(getResourceFile(topic, "FieldsWithDifferentNameBoTransformer.java"));
+    }
+
     private List<JavaFileObject> getResourceFiles(String topic, String... files) {
         return Arrays.stream(files)
                 .map(f -> getResourceFile(topic, f))
