@@ -50,6 +50,20 @@ public class TransformerProcessorTest {
                 .generatesSources(getResourceFile(topic, "FieldsWithDifferentNameBoTransformer.java"));
     }
 
+    @Test
+    public void classesThatImplementTransformerShouldBeDetected() {
+        // Note that the test will not test whether the comments in generated files are the same or not.
+        String topic = "impltransformer";
+        Truth.assert_()
+                .about(javaSources())
+                .that(getResourceFiles(topic, "ApplicantBo.java", "ApplicantPojo.java", "EducationVo.java", "EducationPojo.java"))
+                .processedWith(new TransformerProcessor())
+                .compilesWithoutError()
+                .and()
+                .generatesSources(getResourceFile(topic, "ApplicantBoTransformer.java"), getResourceFile(topic,"EducationPojoTransformer.java"));
+    }
+
+
     private List<JavaFileObject> getResourceFiles(String topic, String... files) {
         return Arrays.stream(files)
                 .map(f -> getResourceFile(topic, f))
