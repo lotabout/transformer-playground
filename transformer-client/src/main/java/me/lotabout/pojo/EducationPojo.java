@@ -9,7 +9,6 @@ import java.util.List;
 import me.lotabout.annotation.Transformer;
 import me.lotabout.bo.EducationVo;
 
-@Transformer(from={EducationVo.class})
 @Data
 @NoArgsConstructor
 public class EducationPojo {

@@ -14,13 +14,8 @@ import java.util.Map;
 public class ApplicantBo {
     private int id;
     private String name;
-    private int age;
-    private Integer salary;
     private List<EducationVo> educationList;
-    private List<List<String>> additionalInfo;
-    private Map<String, EducationVo> educationVoMap;
-    private String[] array;
-    private String[][] stringMatrix;
-    private int[] intArray;
-    private int[][] matrix;
+
+    // don't want to go public
+    private ZonedDateTime lastUpdate;
 }

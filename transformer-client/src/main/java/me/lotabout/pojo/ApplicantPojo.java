@@ -9,11 +9,5 @@ import java.util.List;
 public class ApplicantPojo {
     private int id;
     private String name;
-    private int age;
-    private Integer salary;
     private List<EducationPojo> educationList;
-    private String[] array;
-    private String[][] stringMatrix;
-    private int[] intArray;
-    private int[][] matrix;
 }
