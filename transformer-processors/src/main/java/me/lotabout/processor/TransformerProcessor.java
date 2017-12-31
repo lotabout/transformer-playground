@@ -1,41 +1,25 @@
 package me.lotabout.processor;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableSet;
+import me.lotabout.annotation.Transformer;
+import me.lotabout.processor.model.EntryFactory;
+import me.lotabout.processor.model.TransformerMethod;
+import me.lotabout.processor.model.TypeEntry;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableSet;
-
-import me.lotabout.annotation.Transformer;
-import me.lotabout.processor.model.EntryFactory;
-import me.lotabout.processor.model.FieldEntry;
-import me.lotabout.processor.model.TransformerMethod;
-import me.lotabout.processor.model.TypeEntry;
+import javax.annotation.processing.*;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.TypeElement;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.*;
 
 @SupportedAnnotationTypes("me.lotabout.annotation.Transformer")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
@@ -58,16 +42,6 @@ public class TransformerProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         return ImmutableSet.of(Transformer.class.getCanonicalName());
-    }
-
-    public void debug(Element e, String message, Object... objects) {
-        final Messager messager = processingEnv.getMessager();
-        messager.printMessage(Diagnostic.Kind.NOTE, String.format(message, objects), e);
-    }
-
-    public void error(Element e, String message, Object... objects) {
-        final Messager messager = processingEnv.getMessager();
-        messager.printMessage(Diagnostic.Kind.ERROR, String.format(message, objects), e);
     }
 
     @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {

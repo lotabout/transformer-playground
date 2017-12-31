@@ -46,6 +46,11 @@ public class PrimitiveEntry implements TypeEntry {
     }
 
     @Override
+    public TypeMirror getRaw() {
+        return self;
+    }
+
+    @Override
     public boolean isPrimitive() {
         return true;
     }

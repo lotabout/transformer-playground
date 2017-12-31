@@ -40,6 +40,10 @@ public abstract class AbstractClassEntry implements TypeEntry {
         final PackageElement packageElement = (PackageElement)self.getEnclosingElement();
         return packageElement.isUnnamed() ? "" : packageElement.getQualifiedName().toString();
     }
+    @Override
+    public TypeMirror getRaw() {
+        return raw;
+    }
 
     @Override
     public List<FieldEntry> getAllFields() {
@@ -72,9 +76,5 @@ public abstract class AbstractClassEntry implements TypeEntry {
             }
         }
         return Optional.empty();
-    }
-
-    protected TypeMirror getRaw() {
-        return this.raw;
     }
 }

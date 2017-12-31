@@ -1,5 +1,7 @@
 package me.lotabout.processor.model;
 
+import com.squareup.javapoet.MethodSpec;
+
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 
@@ -28,6 +30,23 @@ public class FieldEntryImpl implements FieldEntry {
     @Override
     public Element getElement() {
         return self;
+    }
+
+    @Override
+    public void transformTo(FieldEntry to, TransformerClass env, MethodSpec.Builder builder) {
+        if (!this.getName().equals(to.getName())) {
+            return;
+        }
+
+        // check if type is transformable
+        if (!this.getType().ableToTransformTo(to.getType())) {
+            env.error(this.getElement(), "Unable to transform %s from %s -> %s. Try to add @Transformer annotation to the types or unify the type of the field.",
+                    this.getName(), this.getType().getFullName(), to.getType().getFullName());
+            return;
+        }
+
+        // perform transformation
+
     }
 
     @Override

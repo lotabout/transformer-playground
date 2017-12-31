@@ -23,6 +23,7 @@ public interface TypeEntry {
 
     List<FieldEntry> getAllFields();
     List<MethodEntry> getAllMethods();
+    TypeMirror getRaw();
 
     boolean isPrimitive();
     boolean isCollection();
