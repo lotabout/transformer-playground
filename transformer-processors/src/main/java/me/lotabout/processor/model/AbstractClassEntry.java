@@ -63,7 +63,7 @@ public abstract class AbstractClassEntry implements TypeEntry {
 
     @Override
     public boolean isBoolean() {
-        return self.getQualifiedName().equals("java.lang.Boolean");
+        return this.getQualifiedName().equals("java.lang.Boolean");
     }
 
     @Override

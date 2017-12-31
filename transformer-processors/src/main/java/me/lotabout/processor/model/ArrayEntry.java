@@ -28,6 +28,7 @@ public class ArrayEntry implements TypeEntry {
     @Override
     public String getFullName() {
         TypeEntry componentClass = EntryFactory.of(self.getComponentType());
+        assert componentClass != null;
         return componentClass.getFullName() + "[]";
     }
 
