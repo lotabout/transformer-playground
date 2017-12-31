@@ -63,6 +63,67 @@ public class TransformerProcessorTest {
                 .generatesSources(getResourceFile(topic, "ApplicantBoTransformer.java"), getResourceFile(topic,"EducationPojoTransformer.java"));
     }
 
+    @Test
+    public void primitiveTypeShouldNotBeCasted() {
+        // Note that the test will not test whether the comments in generated files are the same or not.
+        String topic = "typecheck";
+        Truth.assert_()
+                .about(javaSources())
+                .that(getResourceFiles(topic, "DifferentPrimitiveA.java", "DifferentPrimitiveB.java"))
+                .processedWith(new TransformerProcessor())
+                .failsToCompile()
+                .withErrorContaining("Unable to transform fieldA from int -> short");
+    }
+
+    @Test
+    public void primitiveTypeAndItsWrapperClassShouldNotBeCasted() {
+        // Note that the test will not test whether the comments in generated files are the same or not.
+        String topic = "typecheck";
+        Truth.assert_()
+                .about(javaSources())
+                .that(getResourceFiles(topic, "PrimitiveAndWrapperClassA.java", "PrimitiveAndWrapperClassB.java"))
+                .processedWith(new TransformerProcessor())
+                .failsToCompile()
+                .withErrorCount(8); // all fields should fail to transform
+    }
+
+    @Test
+    public void listOfClassShouldDependsOnItsInnerClasses() {
+        String topic = "typecheck";
+        Truth.assert_()
+                .about(javaSources())
+                .that(getResourceFiles(topic, "ListWrapperA.java", "ListWrapperB.java"))
+                .processedWith(new TransformerProcessor())
+                .failsToCompile()
+                .withErrorCount(2) // all fields should fail to transform
+                .withErrorContaining("Unable to transform list from List<Integer> -> List<String>") ;
+    }
+
+    @Test
+    public void keyOfMapShouldBeDirectlyTransformable() {
+        // e.g. the key of map should be the same class without List/Map wrapper
+        String topic = "typecheck";
+        Truth.assert_()
+                .about(javaSources())
+                .that(getResourceFiles(topic, "MapWrapperKeyA.java", "MapWrapperKeyB.java"))
+                .processedWith(new TransformerProcessor())
+                .failsToCompile()
+                .withErrorCount(2) // all fields should fail to transform
+                .withErrorContaining("Unable to transform mapWithStrangeKey from Map<List<String>, Integer> -> Map<List<String>, Integer>.") ;
+    }
+
+    @Test
+    public void valueOfMapShouldBeTransformable() {
+        // e.g. the key of map should be the same class without List/Map wrapper
+        String topic = "typecheck";
+        Truth.assert_()
+                .about(javaSources())
+                .that(getResourceFiles(topic, "MapWrapperValueA.java", "MapWrapperValueB.java"))
+                .processedWith(new TransformerProcessor())
+                .failsToCompile()
+                .withErrorCount(2) // all fields should fail to transform
+                .withErrorContaining("Unable to transform nestedMismatch from Map<String, List<String>> -> Map<String, List<Integer>>. ") ;
+    }
 
     private List<JavaFileObject> getResourceFiles(String topic, String... files) {
         return Arrays.stream(files)
