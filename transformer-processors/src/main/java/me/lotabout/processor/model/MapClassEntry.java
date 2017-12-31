@@ -1,10 +1,8 @@
 package me.lotabout.processor.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.squareup.javapoet.ClassName;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.lang.model.type.DeclaredType;
@@ -54,16 +52,21 @@ public class MapClassEntry extends AbstractClassEntry {
                 && innerClassesOfA.get(1).ableToTransformTo(innerClassesOfB.get(1));
     }
 
-    @Override public String transformTo(TypeEntry to, String value, int level) {
+    @Override public String transformTo(TypeEntry to, String value, List<Object> params, int level) {
         TypeEntry innerClassOfA = getBoundedClass(this).get(1);
         TypeEntry innerClassOfB = getBoundedClass((MapClassEntry)to).get(1);
 
         String keyVar = "k" + String.valueOf(level);
         String valVar = "v" + String.valueOf(level);
+        ClassName collectors = ClassName.get(Collectors.class);
 
-        return String.format("%s.entrySet().stream().collect(Collectors.toMap(%s -> %s.getKey(), %s -> %s))",
-                value, keyVar, keyVar, valVar,
-                innerClassOfA.transformTo(innerClassOfB, valVar + ".getValue()", level+1));
+        List<Object> innerParams = new ArrayList<>();
+        String transformer = innerClassOfA.transformTo(innerClassOfB, valVar + ".getValue()", innerParams, level+1);
+        params.add(collectors);
+        params.addAll(innerParams);
+
+        return String.format("%s.entrySet().stream().collect($T.toMap(%s -> %s.getKey(), %s -> %s))",
+                value, keyVar, keyVar, valVar, transformer);
     }
 
     @Override public Set<String> getImports() {

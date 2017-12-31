@@ -1,5 +1,7 @@
 package me.lotabout.processor.model;
 
+import com.squareup.javapoet.ClassName;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -48,19 +50,27 @@ public class ConcreteClassEntry extends AbstractClassEntry {
                 || fromClassesOfB.stream().anyMatch(t -> t.getQualifiedName().equals(this.getQualifiedName())));
     }
 
-    @Override public String transformTo(TypeEntry to, String value, int level) {
+    @Override public String transformTo(TypeEntry to, String value, List<Object> params, int level) {
         assert this.ableToTransformDirectlyTo(to) || this.ableToTransformByTransformerTo(to);
+        // From A -> B
+        //   (this) (to)
 
         if (this.ableToTransformDirectlyTo(to)) {
+            // no transformation is needed
             return value;
         }
 
-        // else, able to transform via transformer
+        // able to transform via transformer
+
         List<TypeEntry> toClassesOfA= TypeEntry.getTransformerClasses(this, "to");
         if (toClassesOfA.stream().anyMatch(t -> t.getQualifiedName().equals(to.getQualifiedName()))) {
-            return this.getName()+"Transformer.to"+to.getName()+"("+value+")";
+            ClassName transformer = ClassName.get(this.getPackageName(), String.format("%sTransformer", this.getName()));
+            params.add(0, transformer);
+            return String.format("$T.to%s(%s)", to.getName(), value);
         } else {
-            return to.getName()+"Transformer.from"+this.getName()+"("+value+")";
+            ClassName transformer = ClassName.get(to.getPackageName(), String.format("%sTransformer", to.getName()));
+            params.add(0, transformer);
+            return String.format("$T.from%s(%s)", this.getName(), value);
         }
     }
 

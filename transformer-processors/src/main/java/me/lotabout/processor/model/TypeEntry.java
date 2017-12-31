@@ -62,11 +62,11 @@ public interface TypeEntry {
                 .orElse(ImmutableList.of());
     }
 
-    default String transformTo(TypeEntry to, String value) {
-        return transformTo(to, value, 1);
+    default String transformTo(TypeEntry to, String value, List<Object> params) {
+        return transformTo(to, value, params, 1);
     }
 
     // level is for List or Map. List<List<...>>, level will be used to generate variable names
-    String transformTo(TypeEntry to, String value, int level);
+    String transformTo(TypeEntry to, String value, List<Object> params, int level);
     Set<String> getImports();
 }

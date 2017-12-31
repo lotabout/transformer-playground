@@ -4,6 +4,8 @@ import com.squareup.javapoet.MethodSpec;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FieldEntryImpl implements FieldEntry {
     private VariableElement self;
@@ -45,8 +47,21 @@ public class FieldEntryImpl implements FieldEntry {
             return;
         }
 
-        // perform transformation
+        // we need to call the transformTo method of type to recursively generate the transformer
+        // ex 1: to.setField(ATransformer.toB(from.getField()))
+        // ex 2: to.setField(BTransformer.fromA(from.getField()))
+        // ex 3: to.setField(from.getField().stream(l1 -> l1).collect(Collectors.toList()))
+        // ...
 
+        // to.setField(xxxx(from.getField())xxx)
+        String value = String.format("from.%s()", getGetter());
+        List<Object> params = new ArrayList<>();
+
+        // perform transformation
+        String transformer = this.getType().transformTo(to.getType(), value, params);
+
+        String format = String.format("to.%s(%s)", this.getSetter(), transformer);
+        builder.addStatement(format, params.toArray());
     }
 
     @Override

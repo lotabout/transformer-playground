@@ -86,7 +86,7 @@ public class TransformerMethod {
         builder.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ClassName.get(to.getRaw()))
                 .addParameter(ClassName.get(from.getRaw()), "from")
-                .addStatement("$T to = new $T();", ClassName.get(from.getRaw()));
+                .addStatement("$T to = new $T();", ClassName.get(to.getRaw()), ClassName.get(to.getRaw()));
 
 
         // add method body
@@ -101,17 +101,17 @@ public class TransformerMethod {
         builder.addComment("Fields only in "+from.getName());
         for (String fieldName: getFromOnlyFieldNames()) {
             FieldEntry fromField = fromFields.get(fieldName);
-            builder.addComment("$T: $SN", ClassName.get(fromField.getType().getRaw()), fieldName);
+            builder.addComment("$T: $L", ClassName.get(fromField.getType().getRaw()), fieldName);
         }
 
         builder.addComment("Fields only in "+to.getName());
         for (String fieldName: getToOnlyFieldNames()) {
-            FieldEntry toField = fromFields.get(fieldName);
-            builder.addComment("$T: $SN", ClassName.get(toField.getType().getRaw()), fieldName);
+            FieldEntry toField = toFields.get(fieldName);
+            builder.addComment("$T: $L", ClassName.get(toField.getType().getRaw()), fieldName);
         }
 
         // build the method
-        builder.addStatement("return to;");
+        builder.addStatement("return to");
         return builder.build();
     }
 

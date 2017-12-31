@@ -34,7 +34,7 @@ public class TransformerProcessorTest {
                 .processedWith(new TransformerProcessor())
                 .compilesWithoutError()
                 .and()
-                .generatesSources(getResourceFile(topic, "AllMatchTransformer.java"));
+                .generatesSources(getResourceFile(topic, "AllMatchBoTransformer.java"));
     }
 
     @Test

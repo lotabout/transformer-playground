@@ -1,5 +1,7 @@
 package me.lotabout.processor.model;
 
+import com.squareup.javapoet.ClassName;
+
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.util.HashSet;
@@ -55,15 +57,19 @@ class CollectionClassEntry extends AbstractClassEntry {
                 .collect(Collectors.toList());
     }
 
-    @Override public String transformTo(TypeEntry to, String value, int level) {
+    @Override public String transformTo(TypeEntry to, String value, List<Object> params, int level) {
         assert this.ableToTransformDirectlyTo(to) || this.ableToTransformByTransformerTo(to);
 
         TypeEntry innerClassOfA = getBoundedClass(this).get(0);
         TypeEntry innerClassOfB = getBoundedClass((CollectionClassEntry)to).get(0);
         String listVar = "l" + String.valueOf(level);
+        ClassName collectors = ClassName.get(Collectors.class);
 
-        return String.format("%s.stream().map(%s -> %s).collect(Collectors.toList())",
-                value, listVar, innerClassOfA.transformTo(innerClassOfB, listVar, level + 1));
+        String transformer = innerClassOfA.transformTo(innerClassOfB, listVar, params, level + 1);
+        // the values comes after all params, note that we should call transformer First
+        params.add(collectors);
+
+        return String.format("%s.stream().map(%s -> %s).collect($T.toList())", value, listVar, transformer);
     }
 
     @Override public Set<String> getImports() {
