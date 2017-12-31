@@ -6,7 +6,6 @@ import javax.lang.model.type.TypeMirror;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public class PrimitiveEntry implements TypeEntry {
     private TypeMirror self;
@@ -56,16 +55,6 @@ public class PrimitiveEntry implements TypeEntry {
     }
 
     @Override
-    public boolean isCollection() {
-        return false;
-    }
-
-    @Override
-    public boolean isMap() {
-        return false;
-    }
-
-    @Override
     public boolean isBoolean() {
         return self.getKind() == TypeKind.BOOLEAN;
     }
@@ -87,9 +76,5 @@ public class PrimitiveEntry implements TypeEntry {
     public String transformTo(TypeEntry to, String value, List<Object> params, int level) {
         assert this.ableToTransformDirectlyTo(to);
         return value;
-    }
-
-    @Override public Set<String> getImports() {
-        return Collections.emptySet();
     }
 }

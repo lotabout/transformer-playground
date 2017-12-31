@@ -2,13 +2,8 @@ package me.lotabout.processor.model;
 
 import com.squareup.javapoet.ClassName;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.lang.model.type.TypeMirror;
+import java.util.List;
 
 public class ConcreteClassEntry extends AbstractClassEntry {
     public ConcreteClassEntry(TypeMirror raw) {
@@ -16,21 +11,7 @@ public class ConcreteClassEntry extends AbstractClassEntry {
     }
 
     @Override
-    public boolean isPrimitive() {
-        return false;
-    }
-
-    @Override
-    public boolean isCollection() {
-        return false;
-    }
-
-    @Override
-    public boolean isMap() {
-        return false;
-    }
-
-    @Override public boolean ableToTransformDirectlyTo(TypeEntry from) {
+    public boolean ableToTransformDirectlyTo(TypeEntry from) {
         return this.getQualifiedName().equals(from.getQualifiedName());
     }
 
@@ -43,14 +24,15 @@ public class ConcreteClassEntry extends AbstractClassEntry {
         // Transform: A -> B
         //        (this)   (to)
 
-        List<TypeEntry> toClassesOfA= TypeEntry.getTransformerClasses(this, "to");
+        List<TypeEntry> toClassesOfA = TypeEntry.getTransformerClasses(this, "to");
         List<TypeEntry> fromClassesOfB = TypeEntry.getTransformerClasses(to, "from");
 
         return (toClassesOfA.stream().anyMatch(t -> t.getQualifiedName().equals(to.getQualifiedName()))
                 || fromClassesOfB.stream().anyMatch(t -> t.getQualifiedName().equals(this.getQualifiedName())));
     }
 
-    @Override public String transformTo(TypeEntry to, String value, List<Object> params, int level) {
+    @Override
+    public String transformTo(TypeEntry to, String value, List<Object> params, int level) {
         assert this.ableToTransformDirectlyTo(to) || this.ableToTransformByTransformerTo(to);
         // From A -> B
         //   (this) (to)
@@ -62,7 +44,7 @@ public class ConcreteClassEntry extends AbstractClassEntry {
 
         // able to transform via transformer
 
-        List<TypeEntry> toClassesOfA= TypeEntry.getTransformerClasses(this, "to");
+        List<TypeEntry> toClassesOfA = TypeEntry.getTransformerClasses(this, "to");
         if (toClassesOfA.stream().anyMatch(t -> t.getQualifiedName().equals(to.getQualifiedName()))) {
             ClassName transformer = ClassName.get(this.getPackageName(), String.format("%sTransformer", this.getName()));
             params.add(0, transformer);
@@ -72,9 +54,5 @@ public class ConcreteClassEntry extends AbstractClassEntry {
             params.add(0, transformer);
             return String.format("$T.from%s(%s)", this.getName(), value);
         }
-    }
-
-    @Override public Set<String> getImports() {
-        return new HashSet<>(Collections.singletonList(this.getPackageName() + ".*"));
     }
 }

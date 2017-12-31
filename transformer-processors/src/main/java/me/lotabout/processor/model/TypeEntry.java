@@ -26,8 +26,6 @@ public interface TypeEntry {
     TypeMirror getRaw();
 
     boolean isPrimitive();
-    boolean isCollection();
-    boolean isMap();
     boolean isBoolean();
 
     // two types should be the same to make it return true
@@ -68,5 +66,4 @@ public interface TypeEntry {
 
     // level is for List or Map. List<List<...>>, level will be used to generate variable names
     String transformTo(TypeEntry to, String value, List<Object> params, int level);
-    Set<String> getImports();
 }

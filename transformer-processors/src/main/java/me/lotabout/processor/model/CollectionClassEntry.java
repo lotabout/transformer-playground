@@ -4,9 +4,7 @@ import com.squareup.javapoet.ClassName;
 
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 class CollectionClassEntry extends AbstractClassEntry {
@@ -18,21 +16,6 @@ class CollectionClassEntry extends AbstractClassEntry {
     public String getFullName() {
         TypeEntry innerClass = getBoundedClass(this).get(0);
         return this.getName() + "<" + innerClass.getFullName() + ">";
-    }
-
-    @Override
-    public boolean isPrimitive() {
-        return false;
-    }
-
-    @Override
-    public boolean isCollection() {
-        return true;
-    }
-
-    @Override
-    public boolean isMap() {
-        return false;
     }
 
     @Override public boolean ableToTransformDirectlyTo(TypeEntry from) {
@@ -71,14 +54,4 @@ class CollectionClassEntry extends AbstractClassEntry {
 
         return String.format("%s.stream().map(%s -> %s).collect($T.toList())", value, listVar, transformer);
     }
-
-    @Override public Set<String> getImports() {
-        Set<String> ret = new HashSet<>();
-        ret.add("java.util.stream.Collectors");
-        ret.add(this.getQualifiedName());
-        TypeEntry innerClass = getBoundedClass(this).get(0);
-        ret.addAll(innerClass.getImports());
-        return ret;
-    }
-
 }

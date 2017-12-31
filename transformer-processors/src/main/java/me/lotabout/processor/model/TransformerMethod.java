@@ -71,15 +71,6 @@ public class TransformerMethod {
                 .collect(Collectors.toList());
     }
 
-    public Set<String> getAllImports() {
-        Set<String> ret = new HashSet<>();
-        ret.addAll(from.getImports());
-        ret.addAll(to.getImports());
-        this.getFromFields().values().forEach(field -> ret.addAll(field.getType().getImports()));
-        this.getToFields().values().forEach(field -> ret.addAll(field.getType().getImports()));
-        return ret;
-    }
-
     public MethodSpec generate(TransformerClass environment) {
         MethodSpec.Builder builder = MethodSpec.methodBuilder(this.getName());
         // add method header

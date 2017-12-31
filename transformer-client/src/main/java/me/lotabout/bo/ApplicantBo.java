@@ -5,6 +5,7 @@ import me.lotabout.annotation.Transformer;
 import me.lotabout.pojo.ApplicantPojo;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +19,8 @@ public class ApplicantBo {
     private List<EducationVo> educationList;
     private List<List<String>> additionalInfo;
     private Map<String, EducationVo> educationVoMap;
+    private String[] array;
+    private String[][] stringMatrix;
+    private int[] intArray;
+    private int[][] matrix;
 }

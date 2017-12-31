@@ -66,6 +66,10 @@ public abstract class AbstractClassEntry implements TypeEntry {
         return self.getQualifiedName().equals("java.lang.Boolean");
     }
 
+    @Override
+    public boolean isPrimitive() {
+        return false;
+    }
 
     @Override
     public Optional<AnnotationMirror> getAnnotationMirror(Class<?> clazz) {

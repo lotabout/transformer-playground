@@ -21,6 +21,8 @@ public class EntryFactory {
             case FLOAT:
             case DOUBLE:
                 return new PrimitiveEntry(type);
+            case ARRAY:
+                return new ArrayEntry(type);
             case DECLARED:
                 TypeElement element = (TypeElement)((DeclaredType)type).asElement();
                 switch (element.getQualifiedName().toString()) {

@@ -2,11 +2,11 @@ package me.lotabout.processor.model;
 
 import com.squareup.javapoet.ClassName;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MapClassEntry extends AbstractClassEntry {
     public MapClassEntry(TypeMirror raw) {
@@ -19,21 +19,6 @@ public class MapClassEntry extends AbstractClassEntry {
         TypeEntry keyType = innerClasses.get(0);
         TypeEntry valueType = innerClasses.get(1);
         return this.getName() + "<" + keyType.getFullName() + ", " + valueType.getFullName() + ">";
-    }
-
-    @Override
-    public boolean isPrimitive() {
-        return false;
-    }
-
-    @Override
-    public boolean isCollection() {
-        return false;
-    }
-
-    @Override
-    public boolean isMap() {
-        return false;
     }
 
     @Override public boolean ableToTransformDirectlyTo(TypeEntry to) {
@@ -67,19 +52,6 @@ public class MapClassEntry extends AbstractClassEntry {
 
         return String.format("%s.entrySet().stream().collect($T.toMap(%s -> %s.getKey(), %s -> %s))",
                 value, keyVar, keyVar, valVar, transformer);
-    }
-
-    @Override public Set<String> getImports() {
-        List<TypeEntry> innerClasses = getBoundedClass(this);;
-        TypeEntry keyType = innerClasses.get(0);
-        TypeEntry valueType = innerClasses.get(1);
-
-        Set<String> ret = new HashSet<>();
-        ret.add("java.util.stream.Collectors");
-        ret.add(this.getQualifiedName());
-        ret.add(keyType.getQualifiedName());
-        ret.addAll(valueType.getImports());
-        return ret;
     }
 
     private static List<TypeEntry> getBoundedClass(MapClassEntry clazz) {
