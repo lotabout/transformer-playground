@@ -1,5 +1,6 @@
-a playground to write an annotation processor `@Transformer` for creating
-transformers for classes.
+An annotation processor `@Transformer` for creating transformers for classes.
+
+(Note that it is only for learning purpose and I'll not maintain this repo for product usage)
 
 ## Scenario
 In order to achieve encapsulation, sometimes we need to duplicate the code a
