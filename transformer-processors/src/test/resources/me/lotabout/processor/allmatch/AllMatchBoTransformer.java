@@ -14,7 +14,7 @@ public final class AllMatchBoTransformer {
     to.setFieldLong(from.getFieldLong());
     to.setFieldFloat(from.getFieldFloat());
     to.setFieldDouble(from.getFieldDouble());
-    to.setFieldBoolean(from.getFieldBoolean());
+    to.setFieldBoolean(from.isFieldBoolean());
     to.setFieldByteClass(from.getFieldByteClass());
     to.setFieldCharacter(from.getFieldCharacter());
     to.setFieldShortClass(from.getFieldShortClass());

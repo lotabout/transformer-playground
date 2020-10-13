@@ -108,7 +108,7 @@ public class AllMatchBo {
         this.fieldDouble = fieldDouble;
     }
 
-    public Boolean getFieldBoolean() {
+    public Boolean isFieldBoolean() {
         return fieldBoolean;
     }
 
